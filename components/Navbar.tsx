@@ -33,12 +33,12 @@ export default function Navbar() {
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/services" className="hover:text-blue-600 transition-colors">Services</Link>
             <Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link>
-            <Link 
+            {/* <Link 
               href="/quote" 
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md shadow-blue-600/10"
             >
               Get a Quote
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile Menu Button Hamburger */}
