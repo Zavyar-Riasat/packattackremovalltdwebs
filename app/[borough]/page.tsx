@@ -18,7 +18,7 @@ const fallbackBoroughData: { [key: string]: any } = {
     region: 'Central London',
     postcodes: ['SW1', 'W1', 'WC1', 'WC2'],
     metaTitle: 'Westminster Removals | Professional Moving Services in Westminster',
-    metaDescrddddiption: 'Expert removals in Westminster. Reliable, insured, and affordable moving services.',
+    metaDescrddddiption 'Expert removals in Westminster. Reliable, insured, and affordable moving services.',
     heroHeading: 'Professional Removals in Westminster',
     heroSubheading: 'Trusted by Westminster residents and businesses',
     localText: '<p>Moving in Westminster? We specialize in navigating central London\'s busy streets. Our team knows the area inside out.</p>',
