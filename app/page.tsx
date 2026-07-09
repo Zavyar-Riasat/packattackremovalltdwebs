@@ -10,7 +10,7 @@ export default function HomePage() {
           Pack Attack Removals Ltd
         </span>
         <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-900">
-          Professional Moving Services <br />
+          Professional Moving Servicessssss <br />
           <span className="text-blue-600">Across London</span>
         </h1>
         <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-medium">
