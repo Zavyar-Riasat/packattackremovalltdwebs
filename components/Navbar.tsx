@@ -91,13 +91,13 @@ export default function Navbar() {
               About Us
             </Link> */}
             <div className="pt-2 px-3">
-              <Link 
+              {/* <Link 
                 href="/quote" 
                 onClick={() => setIsOpen(false)}
                 className="block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md"
               >
                 Get a Quote
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
