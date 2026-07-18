@@ -1,6 +1,11 @@
 // app/layout.tsx
 import { NavbarWrapper } from "../components/NavbarWrapper";
-import "./globals.css"; // 👈 Crucial line to link your Tailwind styles
+import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+import Footer from "./sections/footer";
+
+const geist = Geist({subsets:['latin'], variable:'--font-sans'});
 
 export default function RootLayout({
   children,
@@ -8,11 +13,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      
+    <html lang="en" className={cn("font-sans", geist.variable)}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* REMOVED OSM preconnect - it was blocking rendering */}
+        {/* Preload only critical images */}
+        <link rel="preload" as="image" href="/images/logo.png" />
+      </head>
       <body>
         <NavbarWrapper/>
-        {children}</body>
+        {children}
+        <Footer/>
+      </body>
     </html>
   );
 }

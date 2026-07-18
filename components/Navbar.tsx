@@ -9,7 +9,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 antialiased">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 border-b border-slate-100 antialiased transform-gpu will-change-transform">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
@@ -32,13 +32,13 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8 font-semibold text-sm text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/services" className="hover:text-blue-600 transition-colors">Services</Link>
-            {/* <Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link> */}
-            {/* <Link 
+            <Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link>
+            <Link 
               href="/quote" 
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md shadow-blue-600/10"
             >
               Get a Quote
-            </Link> */}
+            </Link>
           </div>
 
           {/* Mobile Menu Button Hamburger */}
@@ -83,21 +83,21 @@ export default function Navbar() {
             >
               Services
             </Link>
-            {/* <Link 
+            <Link 
               href="/about" 
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2.5 rounded-xl hover:bg-slate-50 hover:text-blue-600 transition-all"
             >
               About Us
-            </Link> */}
+            </Link>
             <div className="pt-2 px-3">
-              {/* <Link 
+              <Link 
                 href="/quote" 
                 onClick={() => setIsOpen(false)}
                 className="block text-center py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md"
               >
                 Get a Quote
-              </Link> */}
+              </Link>
             </div>
           </div>
         </div>

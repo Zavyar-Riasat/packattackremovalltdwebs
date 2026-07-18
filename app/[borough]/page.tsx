@@ -2,10 +2,9 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import dbConnect from '../lib/dbConnect';
-import Location from '../models/Location';
 import BoroughLayout from '@/components/BoroughLayout';
 import PostcodeSearch from '@/components/PostcodeSearch';
+import { getCachedLocationBySlug, getCachedOsmLocation } from '../lib/location-cache';
 
 interface Props {
   params: Promise<{ borough: string }>;
@@ -137,79 +136,32 @@ const fallbackBoroughData: { [key: string]: any } = {
 };
 
 // Fallback helper to fetch geographical data if the route isn't in MongoDB
-async function fetchExternalLocation(slug: string) {
-  try {
-    const formattedSlug = slug.replace(/-/g, ' ');
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(formattedSlug + ', UK')}&format=json&addressdetails=1&limit=1`;
-    
-    console.log('🌍 Fetching external location from OSM:', formattedSlug);
-    
-    const response = await fetch(url, {
-      headers: { 
-        'User-Agent': 'PackAttackRemovalsApp/1.0 (contact@packattack.com)' 
-      }
-    });
-
-    if (!response.ok) {
-      console.log('❌ OSM API error:', response.status);
-      return null;
-    }
-    
-    const data = await response.json();
-    console.log('📊 OSM results:', data.length || 0, 'results');
-    
-    if (data && data.length > 0) {
-      const address = data[0].address || {};
-      const name = address.suburb || 
-                   address.borough || 
-                   address.city_district || 
-                   address.city || 
-                   address.town || 
-                   address.village || 
-                   address.county || 
-                   formattedSlug;
-      
-      const region = address.state || address.region || address.country || 'United Kingdom';
-      
-      const postcode = address.postcode ? address.postcode.toUpperCase() : 'London';
-      
-      const externalData = {
-        boroughName: name.charAt(0).toUpperCase() + name.slice(1),
-        region: region,
-        postcodes: [postcode],
-        metaTitle: `${name} Removals | Professional Moving Services in ${name}`,
-        metaDescription: `Expert removals in ${name}. Reliable, insured, and affordable moving services in ${region}.`,
-        heroHeading: `Professional Removals in ${name}`,
-        heroSubheading: `Your trusted, fully insured moving team serving ${name} and surrounding areas.`,
-        localText: `<p>Planning a relocation in or around ${name}? Our professional removal teams handle everything from narrow street access to packing fragile items safely. We provide reliable, fully insured moving services across ${region}.</p><p>Whether you're moving a studio flat or a family home, our experienced team is here to make your move stress-free. Contact us today for a free, no-obligation quote.</p>`,
-        prices: { manVan: 45, houseMove: 249 }
-      };
-      
-      console.log('✅ OSM fallback data generated for:', name);
-      return externalData;
-    } else {
-      console.log('❌ No OSM results found for:', formattedSlug);
-    }
-  } catch (e) {
-    console.error("OSM Fallback error:", e);
-  }
-  return null;
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    await dbConnect();
     const { borough } = await params;
     const targetSlug = borough.toLowerCase();
     
-    let locationData = await Location.findOne({ slug: targetSlug }).lean();
+    let locationData = await getCachedLocationBySlug(targetSlug);
     
     if (!locationData && fallbackBoroughData[targetSlug]) {
       locationData = fallbackBoroughData[targetSlug];
     }
     
     if (!locationData) {
-      locationData = await fetchExternalLocation(targetSlug);
+      const osmLocation = await getCachedOsmLocation(targetSlug);
+      if (osmLocation) {
+        locationData = {
+          boroughName: osmLocation.boroughName,
+          region: osmLocation.region,
+          postcodes: [osmLocation.postcode],
+          metaTitle: `${osmLocation.boroughName} Removals | Professional Moving Services in ${osmLocation.boroughName}`,
+          metaDescription: `Expert removals in ${osmLocation.boroughName}. Reliable, insured, and affordable moving services in ${osmLocation.region}.`,
+          heroHeading: `Professional Removals in ${osmLocation.boroughName}`,
+          heroSubheading: `Your trusted, fully insured moving team serving ${osmLocation.boroughName} and surrounding areas.`,
+          localText: `<p>Planning a relocation in or around ${osmLocation.boroughName}? Our professional removal teams handle everything from narrow street access to packing fragile items safely. We provide reliable, fully insured moving services across ${osmLocation.region}.</p><p>Whether you're moving a studio flat or a family home, our experienced team is here to make your move stress-free. Contact us today for a free, no-obligation quote.</p>`,
+          prices: { manVan: 45, houseMove: 249 }
+        };
+      }
     }
 
     if (!locationData) {
@@ -241,7 +193,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DynamicBoroughPage({ params }: Props) {
   try {
-    await dbConnect();
     const { borough } = await params;
     const targetSlug = borough.toLowerCase();
     
@@ -250,7 +201,7 @@ export default async function DynamicBoroughPage({ params }: Props) {
     }
     
     // Strategy A: Check database
-    let locationData = await Location.findOne({ slug: targetSlug }).lean();
+    let locationData = await getCachedLocationBySlug(targetSlug);
     
     // ✅ FIX: Explicitly type dataSource with the correct literal types
     let dataSource: 'database' | 'fallback' | 'openstreetmap' = 'database';
@@ -263,9 +214,19 @@ export default async function DynamicBoroughPage({ params }: Props) {
     
     // Strategy C: Fetch from OSM
     if (!locationData) {
-      const externalData = await fetchExternalLocation(targetSlug);
-      if (externalData) {
-        locationData = externalData;
+      const osmLocation = await getCachedOsmLocation(targetSlug);
+      if (osmLocation) {
+        locationData = {
+          boroughName: osmLocation.boroughName,
+          region: osmLocation.region,
+          postcodes: [osmLocation.postcode],
+          metaTitle: `${osmLocation.boroughName} Removals | Professional Moving Services in ${osmLocation.boroughName}`,
+          metaDescription: `Expert removals in ${osmLocation.boroughName}. Reliable, insured, and affordable moving services in ${osmLocation.region}.`,
+          heroHeading: `Professional Removals in ${osmLocation.boroughName}`,
+          heroSubheading: `Your trusted, fully insured moving team serving ${osmLocation.boroughName} and surrounding areas.`,
+          localText: `<p>Planning a relocation in or around ${osmLocation.boroughName}? Our professional removal teams handle everything from narrow street access to packing fragile items safely. We provide reliable, fully insured moving services across ${osmLocation.region}.</p><p>Whether you're moving a studio flat or a family home, our experienced team is here to make your move stress-free. Contact us today for a free, no-obligation quote.</p>`,
+          prices: { manVan: 45, houseMove: 249 }
+        };
         dataSource = 'openstreetmap';
       }
     }
