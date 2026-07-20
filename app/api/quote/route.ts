@@ -53,13 +53,21 @@ export async function POST(req: Request) {
     `;
 
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      await transporter.sendMail({
-        from: `"Pack & Attack Quotes" <${process.env.EMAIL_USER}>`,
-        to: 'info@packattackremovalltd.com',
+      const recipient = process.env.QUOTE_RECIPIENT || 'info@packattackremovalltd.com';
+      const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER || '';
+      const ownerBcc = process.env.OWNER_EMAIL || '';
+
+      const mailOptions: any = {
+        from: `"Pack & Attack Quotes" <${fromAddress}>`,
+        to: recipient,
         replyTo: email,
         subject: `New Quote Request from ${name}`,
         html: htmlContent,
-      });
+      };
+
+      if (ownerBcc) mailOptions.bcc = ownerBcc;
+
+      await transporter.sendMail(mailOptions);
     } else {
       console.warn('⚠️ EMAIL_USER or EMAIL_PASS environment variables are not set! Email was NOT sent. Logging data instead:');
       console.log('--- Quote Data ---');
