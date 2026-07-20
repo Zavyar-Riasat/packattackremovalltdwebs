@@ -1,183 +1,171 @@
-// app/contact/page.tsx
-'use client';
+import React from 'react';
+import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import { Phone, Mail, MapPin, Clock } from 'lucide-react';
+import bgImage from '../../public/images/carousel1.webp';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+const ContactForm = dynamic(() => import('./ContactForm'), {
+  loading: () => <div className="h-[600px] bg-slate-100 rounded-3xl animate-pulse" />
+});
+
+export const metadata: Metadata = {
+  title: 'Contact Us | Pack & Attack Removal Ltd',
+  description: 'Get in touch with London\'s most reliable moving company. We are available 24/7 for residential, commercial, and emergency removals.',
+  alternates: {
+    canonical: 'https://www.packattackremovalltd.com/contact',
+  },
+  openGraph: {
+    title: 'Contact Us | Pack & Attack Removal Ltd',
+    description: 'Get in touch with London\'s most reliable moving company.',
+    url: 'https://www.packattackremovalltd.com/contact',
+    type: 'website'
+  }
+};
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  });
-
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would send the form data to your API
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    // Reset form after submission
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-    });
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Pack & Attack Removals",
+    "description": "Contact information and form for Pack & Attack Removals London.",
+    "url": "https://www.packattackremovalltd.com/contact",
+    "mainEntity": {
+      "@type": "LocalBusiness",
+      "name": "Pack & Attack Removal Ltd",
+      "image": "https://www.packattackremovalltd.com/images/logo.png",
+      "telephone": ["+447577441654", "+447775144475"],
+      "email": "info@packattackremovalltd.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "London",
+        "addressCountry": "GB"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "00:00",
+        "closes": "23:59"
+      }
+    }
   };
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-slate-50 py-20">
-        <div className="max-w-3xl mx-auto px-4">
-          <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center">
-            <div className="text-6xl mb-4">✅</div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">Thank You!</h1>
-            <p className="text-slate-600">
-              We've received your message and will get back to you within 24 hours.
-            </p>
-            <Link 
-              href="/" 
-              className="inline-block mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-            >
-              Return Home
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50 py-20">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-black text-slate-900">Contact Us</h1>
-          <p className="text-lg text-slate-600 mt-2">
-            Have a question or need a quote? We're here to help!
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Contact Info */}
-          <div className="md:col-span-1 space-y-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-semibold text-slate-800 mb-2">📍 Address</h3>
-              <p className="text-sm text-slate-600">
-                123 London Road<br />
-                London, UK<br />
-                SW1A 1AA
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-semibold text-slate-800 mb-2">📞 Phone</h3>
-              <p className="text-sm text-slate-600">
-                <a href="tel:+442079460192" className="hover:text-blue-600 transition-colors">
-                  020 7946 0192
-                </a>
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-semibold text-slate-800 mb-2">✉️ Email</h3>
-              <p className="text-sm text-slate-600">
-                <a href="mailto:info@packattackremovals.co.uk" className="hover:text-blue-600 transition-colors">
-                  info@packattackremovals.co.uk
-                </a>
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-              <h3 className="font-semibold text-slate-800 mb-2">🕐 Hours</h3>
-              <p className="text-sm text-slate-600">
-                Mon-Fri: 8:00 AM - 6:00 PM<br />
-                Sat-Sun: 9:00 AM - 4:00 PM
-              </p>
-            </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
+      <main className="flex flex-col min-h-screen bg-slate-50 overflow-hidden pt-16">
+        
+        {/* Premium Hero Section */}
+        <section className="relative min-h-[40vh] py-20 w-full flex items-center justify-center">
+          <div className="absolute inset-0 z-0">
+            <Image 
+              src={bgImage} 
+              alt="Contact Pack & Attack Removals" 
+              fill 
+              priority 
+              fetchPriority="high"
+              quality={60}
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/90 via-slate-900/80 to-slate-50" />
           </div>
+          
+          <div className="relative z-10 max-w-4xl w-full mx-auto px-4 sm:px-6 text-center mt-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-4 drop-shadow-sm">
+              Get in Touch
+            </h1>
+            <p className="text-lg text-slate-300 font-medium max-w-2xl mx-auto">
+              Whether you need an urgent quote, have a question about an upcoming move, or want to join our team, we are here for you 24/7.
+            </p>
+          </div>
+        </section>
 
-          {/* Contact Form */}
-          <div className="md:col-span-2">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="John Doe"
-                    />
+        {/* Content Section */}
+        <section className="relative z-20 -mt-20 pb-24 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12">
+            
+            {/* Left Column: Contact Info Cards */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              <div className="bg-emerald-900 text-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                <h3 className="text-2xl font-black mb-6 relative z-10">Direct Contact</h3>
+                
+                <div className="space-y-6 relative z-10">
+                  <a href="tel:+447577441654" className="flex items-start group/link">
+                    <div className="w-12 h-12 bg-emerald-800 rounded-xl flex items-center justify-center shrink-0 mr-4 group-hover/link:bg-emerald-500 transition-colors">
+                      <Phone className="w-5 h-5 text-emerald-100" />
+                    </div>
+                    <div>
+                      <p className="text-emerald-400 font-bold text-sm uppercase tracking-wide">Main Line</p>
+                      <p className="text-lg font-medium">07577 441 654</p>
+                    </div>
+                  </a>
+
+                  <a href="tel:+447775144475" className="flex items-start group/link">
+                    <div className="w-12 h-12 bg-emerald-800 rounded-xl flex items-center justify-center shrink-0 mr-4 group-hover/link:bg-emerald-500 transition-colors">
+                      <Phone className="w-5 h-5 text-emerald-100" />
+                    </div>
+                    <div>
+                      <p className="text-emerald-400 font-bold text-sm uppercase tracking-wide">Secondary Line</p>
+                      <p className="text-lg font-medium">07775 144 475</p>
+                    </div>
+                  </a>
+
+                  <a href="mailto:info@packattackremovalltd.com" className="flex items-start group/link">
+                    <div className="w-12 h-12 bg-emerald-800 rounded-xl flex items-center justify-center shrink-0 mr-4 group-hover/link:bg-emerald-500 transition-colors">
+                      <Mail className="w-5 h-5 text-emerald-100" />
+                    </div>
+                    <div>
+                      <p className="text-emerald-400 font-bold text-sm uppercase tracking-wide">Email</p>
+                      <p className="text-base font-medium break-all">info@packattackremovalltd.com</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div className="bg-white p-8 rounded-3xl shadow-lg border border-slate-200">
+                <div className="flex items-start mb-6">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                    <Clock className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Email Address *</label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="john@example.com"
-                    />
+                    <h3 className="text-xl font-black text-slate-900">Operating Hours</h3>
+                    <p className="text-slate-500 font-medium mt-1">Available exactly when you need us.</p>
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="020 7946 0192"
-                  />
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                    <span className="font-bold text-slate-700">Monday - Friday</span>
+                    <span className="font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-sm">24 Hours</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                    <span className="font-bold text-slate-700">Saturday</span>
+                    <span className="font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-sm">24 Hours</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="font-bold text-slate-700">Sunday</span>
+                    <span className="font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-sm">24 Hours</span>
+                  </div>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Subject</label>
-                  <select
-                    value={formData.subject}
-                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="quote">Request a Quote</option>
-                    <option value="booking">Booking Enquiry</option>
-                    <option value="general">General Enquiry</option>
-                    <option value="complaint">Feedback / Complaint</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Message *</label>
-                  <textarea
-                    required
-                    rows={5}
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Tell us about your moving needs..."
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20"
-                >
-                  Send Message
-                </button>
-              </form>
             </div>
+
+            {/* Right Column: Dynamic Form */}
+            <div className="lg:col-span-3">
+              <ContactForm />
+            </div>
+
           </div>
-        </div>
-      </div>
-    </div>
+        </section>
+
+      </main>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 // app/api/lookup/route.ts
 import { NextResponse } from 'next/server';
+import { getCachedOsmLocation } from '@/app/lib/location-cache';
 
 // Static mapping for common London areas and landmarks
 const placeMappings: { [key: string]: { postcode: string; borough: string; region: string } } = {
@@ -168,8 +169,8 @@ export async function GET(request: Request) {
         return NextResponse.json({
           valid: true,
           postcode: result.postcode,
-          borough: result.admin_district || result.admin_ward || 'London',
-          region: result.region || 'London',
+          borough: Array.isArray(result.admin_district) ? result.admin_district[0] : (result.admin_district || result.admin_ward || 'London'),
+          region: Array.isArray(result.region) ? result.region[0] : (result.region || 'London'),
           country: result.country || 'England',
           latitude: result.latitude,
           longitude: result.longitude,
@@ -260,8 +261,8 @@ export async function GET(request: Request) {
               return NextResponse.json({
                 valid: true,
                 postcode: outcode,
-                borough: result.admin_district || result.admin_ward || 'London',
-                region: result.region || 'London',
+                borough: Array.isArray(result.admin_district) ? result.admin_district[0] : (result.admin_district || result.admin_ward || 'London'),
+                region: Array.isArray(result.region) ? result.region[0] : (result.region || 'London'),
                 country: result.country || 'England',
                 latitude: result.latitude,
                 longitude: result.longitude,
@@ -302,62 +303,27 @@ export async function GET(request: Request) {
       });
     }
 
-    // STRATEGY F: OpenStreetMap Nominatim Textual Place Lookup (NEW!)
+    // STRATEGY F: OpenStreetMap Nominatim Textual Place Lookup (cached)
     console.log('🌍 Trying OpenStreetMap Nominatim for:', cleanQuery);
     try {
-      // We append "UK" to favor UK results
-      const osmUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanQuery + ', UK')}&format=json&addressdetails=1&limit=1`;
-      
-      const osmResponse = await fetch(osmUrl, {
-        headers: {
-          'User-Agent': 'PackAttackRemovalsApp/1.0 (contact@packattack.com)' // OSM requires a user-agent header
-        }
-      });
+      const osmLocation = await getCachedOsmLocation(cleanQuery);
 
-      if (osmResponse.ok) {
-        const osmData = await osmResponse.json();
-        console.log('📊 OSM results:', osmData.length || 0, 'results');
-        
-        if (osmData && osmData.length > 0) {
-          const result = osmData[0];
-          const address = result.address || {};
-
-          // Extract the best available location information
-          const locationName = address.suburb || 
-                              address.borough || 
-                              address.city_district || 
-                              address.city || 
-                              address.town || 
-                              address.village || 
-                              address.county || 
-                              'London';
-          
-          // Try to get a postcode, or use a default
-          const displayPostcode = address.postcode ? address.postcode.toUpperCase() : 'London';
-          
-          // Try to extract region/state
-          const region = address.state || address.region || address.country || 'London';
-
-          console.log('✅ OSM match found:', { locationName, displayPostcode, region });
-
-          return NextResponse.json({
-            valid: true,
-            postcode: displayPostcode,
-            borough: locationName,
-            region: region,
-            country: address.country || 'England',
-            latitude: parseFloat(result.lat) || null,
-            longitude: parseFloat(result.lon) || null,
-            source: 'openstreetmap_nominatim',
-            place_name: cleanQuery,
-            display_name: result.display_name
-          });
-        } else {
-          console.log('❌ No OSM results found');
-        }
-      } else {
-        console.log('❌ OSM API error:', osmResponse.status);
+      if (osmLocation) {
+        return NextResponse.json({
+          valid: true,
+          postcode: osmLocation.postcode,
+          borough: osmLocation.boroughName,
+          region: osmLocation.region,
+          country: osmLocation.country,
+          latitude: osmLocation.latitude,
+          longitude: osmLocation.longitude,
+          source: 'openstreetmap_nominatim',
+          place_name: cleanQuery,
+          display_name: osmLocation.displayName,
+        });
       }
+
+      console.log('❌ No OSM results found');
     } catch (osmError) {
       console.log('OSM Nominatim error:', osmError);
     }

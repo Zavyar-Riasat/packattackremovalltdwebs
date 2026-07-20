@@ -148,7 +148,7 @@ export default function PostcodeSearch() {
         <button
           type="submit"
           disabled={loading}
-          className="px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20 active:scale-[0.98] disabled:shadow-none"
+          className="px-8 py-4 bg-blue-900 hover:bg-blue-950 disabled:bg-slate-400 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20 active:scale-[0.98] disabled:shadow-none"
         >
           {loading ? 'Searching...' : 'Find My Area'}
         </button>
