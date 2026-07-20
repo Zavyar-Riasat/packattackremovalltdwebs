@@ -145,7 +145,7 @@ export default function PricingSection() {
   const activeTiers = PRICING_DATABASE[selectedSize]
 
   return (
-    <section className="py-16 px-4 bg-slate-50 text-slate-900 w-full contain-intrinsic-size">
+    <section id="pricing" className="py-16 px-4 bg-slate-50 text-slate-900 w-full contain-intrinsic-size">
       <div className="max-w-6xl mx-auto">
         
         {/* Header */}

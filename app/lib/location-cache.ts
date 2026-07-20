@@ -29,9 +29,14 @@ const ONE_DAY = 60 * 60 * 24;
 
 export const getCachedLocationBySlug = unstable_cache(
   async (slug: string): Promise<LocationRecord | null> => {
-    await dbConnect();
-    const location = await Location.findOne({ slug }).lean<LocationRecord>();
-    return location ? (location as LocationRecord) : null;
+    try {
+      await dbConnect();
+      const location = await Location.findOne({ slug }).lean<LocationRecord>();
+      return location ? (location as LocationRecord) : null;
+    } catch (e) {
+      console.warn('DB connect or query failed:', e);
+      return null;
+    }
   },
   ['borough-location-db'],
   { revalidate: ONE_DAY }

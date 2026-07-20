@@ -169,8 +169,8 @@ export async function GET(request: Request) {
         return NextResponse.json({
           valid: true,
           postcode: result.postcode,
-          borough: result.admin_district || result.admin_ward || 'London',
-          region: result.region || 'London',
+          borough: Array.isArray(result.admin_district) ? result.admin_district[0] : (result.admin_district || result.admin_ward || 'London'),
+          region: Array.isArray(result.region) ? result.region[0] : (result.region || 'London'),
           country: result.country || 'England',
           latitude: result.latitude,
           longitude: result.longitude,
@@ -261,8 +261,8 @@ export async function GET(request: Request) {
               return NextResponse.json({
                 valid: true,
                 postcode: outcode,
-                borough: result.admin_district || result.admin_ward || 'London',
-                region: result.region || 'London',
+                borough: Array.isArray(result.admin_district) ? result.admin_district[0] : (result.admin_district || result.admin_ward || 'London'),
+                region: Array.isArray(result.region) ? result.region[0] : (result.region || 'London'),
                 country: result.country || 'England',
                 latitude: result.latitude,
                 longitude: result.longitude,

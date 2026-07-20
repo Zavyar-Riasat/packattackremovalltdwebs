@@ -5,21 +5,21 @@ import * as React from "react"
 // Static Navigation Data (Declared outside component to optimize memory footprint)
 const FOOTER_LINKS = {
   services: [
-    { label: "House Removals", href: "#" },
-    { label: "Office Relocation", href: "#" },
-    { label: "Packing Services", href: "#" },
-    { label: "Single Item Delivery", href: "#" },
+    { label: "House Removals", href: "/services" },
+    { label: "Office Relocation", href: "/services" },
+    { label: "Packing Services", href: "/services" },
+    { label: "Get a Quote", href: "/quote" },
   ],
   company: [
-    { label: "About Us", href: "#" },
-    { label: "Our Process", href: "#" },
-    { label: "Pricing & Plans", href: "#" },
-    { label: "Contact", href: "#" },
+    { label: "About Us", href: "/about" },
+    { label: "Our Process", href: "/about#process" },
+    { label: "Pricing & Plans", href: "/#pricing" },
+    { label: "Contact", href: "/contact" },
   ],
   legal: [
-    { label: "Terms of Service", href: "#" },
-    { label: "Privacy Policy", href: "#" },
-    { label: "Insurance Coverage", href: "#" },
+    { label: "Terms of Service", href: "/#terms" },
+    { label: "Privacy Policy", href: "/#privacy" },
+    { label: "Insurance Coverage", href: "/about" },
   ]
 }
 
@@ -65,20 +65,45 @@ const GoogleGLogo = () => (
 )
 
 export default function Footer() {
-  const handleSubscribe = (e: React.FormEvent) => {
+  const [isSending, setIsSending] = React.useState(false)
+  const [isSent, setIsSent] = React.useState(false)
+
+  const handleQuickMessage = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSending(true)
     const formData = new FormData(e.target as HTMLFormElement)
     const email = formData.get("email")
-    console.log("Subscribed email package target:", email)
+    const message = formData.get("message")
+
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Quick Query',
+          email,
+          phone: '',
+          subject: 'Quick Query from Footer',
+          message
+        }),
+      });
+      setIsSent(true)
+      ;(e.target as HTMLFormElement).reset()
+      setTimeout(() => setIsSent(false), 3000)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsSending(false)
+    }
   }
 
   return (
     <footer className="bg-slate-950 text-slate-400 pt-16 pb-8 border-t border-slate-900 overflow-hidden w-full">
       <div className="max-w-6xl mx-auto px-4 md:px-8">
-        
+
         {/* Main Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-slate-900">
-          
+
           {/* Brand & Trust Badges Column */}
           <div className="md:col-span-4 space-y-6">
             <div className="space-y-3">
@@ -117,13 +142,17 @@ export default function Footer() {
 
             {/* Direct Contact Links */}
             <div className="space-y-3 pt-1">
-              <a href="tel:+441234567890" className="flex items-center gap-3 text-xs md:text-sm text-slate-300 hover:text-emerald-400 transition-colors duration-150 w-fit">
+              <a href="tel:+447577441654" className="flex items-center gap-3 text-xs md:text-sm text-slate-300 hover:text-emerald-400 transition-colors duration-150 w-fit">
                 <PhoneIcon />
-                <span>+44 123 456 7890</span>
+                <span>07577 441 654</span>
               </a>
-              <a href="mailto:info@packandattack.co.uk" className="flex items-center gap-3 text-xs md:text-sm text-slate-300 hover:text-emerald-400 transition-colors duration-150 w-fit">
+              <a href="tel:+447775144475" className="flex items-center gap-3 text-xs md:text-sm text-slate-300 hover:text-emerald-400 transition-colors duration-150 w-fit">
+                <PhoneIcon />
+                <span>07775 144 475</span>
+              </a>
+              <a href="mailto:info@packattackremovalltd.com" className="flex items-center gap-3 text-xs md:text-sm text-slate-300 hover:text-emerald-400 transition-colors duration-150 w-fit">
                 <EmailIcon />
-                <span>info@packandattack.co.uk</span>
+                <span>info@packattackremovalltd.com</span>
               </a>
               <div className="flex items-center gap-3 text-xs md:text-sm text-slate-500">
                 <MapPinIcon />
@@ -160,30 +189,47 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter Form Column */}
+          {/* Quick Message Form Column */}
           <div className="md:col-span-4 space-y-4">
-            <h4 className="text-xs font-black text-white uppercase tracking-wider">Stay Updated</h4>
+            <h4 className="text-xs font-black text-white uppercase tracking-wider">Quick Message</h4>
             <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-medium">
-              Subscribe to our newsletter for moving guidelines, updates, and seasonal pricing options.
+              Have a quick query? Send us a message directly.
             </p>
-            
-            <form onSubmit={handleSubscribe} className="space-y-3 pt-2">
-              <div className="relative flex items-center h-[46px]">
-                <input
-                  type="email"
-                  name="email"
+
+            <form onSubmit={handleQuickMessage} className="space-y-3 pt-2 relative">
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Your email address"
+                className="w-full p-3 text-xs font-medium rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-600 transition-colors"
+              />
+              <div className="relative flex items-end">
+                <textarea
+                  name="message"
                   required
-                  placeholder="Enter your email"
-                  className="w-full h-full pl-4 pr-12 text-xs font-medium rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-600 transition-colors duration-150"
+                  rows={2}
+                  placeholder="Your message..."
+                  className="w-full p-3 pr-12 text-xs font-medium rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-600 transition-colors resize-none"
                 />
                 <button
                   type="submit"
-                  aria-label="Subscribe"
-                  className="absolute right-1.5 h-8 w-8 flex items-center justify-center rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white transition-colors duration-150 group"
+                  disabled={isSending || isSent}
+                  aria-label="Send Message"
+                  className="absolute right-1.5 bottom-1.5 h-8 w-8 flex items-center justify-center rounded-lg bg-emerald-700 hover:bg-emerald-600 disabled:bg-emerald-900 text-white transition-colors duration-150 group"
                 >
-                  <ArrowRightIcon />
+                  {isSent ? (
+                    <svg className="w-4 h-4 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <ArrowRightIcon />
+                  )}
                 </button>
               </div>
+              {isSent && (
+                <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider absolute -bottom-5 right-1">Message Sent!</p>
+              )}
             </form>
           </div>
 
@@ -219,8 +265,8 @@ export default function Footer() {
             "@type": "LocalBusiness",
             "name": "Pack & Attack Removals",
             "description": "Professional, reliable, and stress-free moving and removal services.",
-            "url": "https://packandattack.co.uk",
-            "telephone": "+441234567890",
+            "url": "https://www.packattackremovalltd.com",
+            "telephone": ["+447577441654", "+447775144475"],
             "priceRange": "££",
             "address": {
               "@type": "PostalAddress",

@@ -140,13 +140,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const { borough } = await params;
     const targetSlug = borough.toLowerCase();
-    
+
     let locationData = await getCachedLocationBySlug(targetSlug);
-    
+
     if (!locationData && fallbackBoroughData[targetSlug]) {
       locationData = fallbackBoroughData[targetSlug];
     }
-    
+
     if (!locationData) {
       const osmLocation = await getCachedOsmLocation(targetSlug);
       if (osmLocation) {
@@ -165,8 +165,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     if (!locationData) {
-      return { 
-        title: "Removals Services UK | Professional Moving Company" 
+      return {
+        title: "Removals Services UK | Professional Moving Company"
       };
     }
 
@@ -185,8 +185,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch (error) {
     console.error('Error in generateMetadata:', error);
-    return { 
-      title: "Removals Services UK | Professional Moving Company" 
+    return {
+      title: "Removals Services UK | Professional Moving Company"
     };
   }
 }
@@ -195,23 +195,23 @@ export default async function DynamicBoroughPage({ params }: Props) {
   try {
     const { borough } = await params;
     const targetSlug = borough.toLowerCase();
-    
+
     if (targetSlug.includes('.')) {
       notFound();
     }
-    
+
     // Strategy A: Check database
     let locationData = await getCachedLocationBySlug(targetSlug);
-    
+
     // ✅ FIX: Explicitly type dataSource with the correct literal types
     let dataSource: 'database' | 'fallback' | 'openstreetmap' = 'database';
-    
+
     // Strategy B: Check fallback data
     if (!locationData && fallbackBoroughData[targetSlug]) {
       locationData = fallbackBoroughData[targetSlug];
       dataSource = 'fallback';
     }
-    
+
     // Strategy C: Fetch from OSM
     if (!locationData) {
       const osmLocation = await getCachedOsmLocation(targetSlug);
@@ -264,9 +264,9 @@ export default async function DynamicBoroughPage({ params }: Props) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        
+
         <BoroughLayout data={locationData} dataSource={dataSource} />
-        
+
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
             <h2 className="text-2xl font-bold text-center mb-6">

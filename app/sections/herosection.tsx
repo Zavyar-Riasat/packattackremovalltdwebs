@@ -2,7 +2,8 @@
 'use client'
 
 import * as React from "react"
-import Image from "next/image"
+import ReactDOM from "react-dom"
+import { getImageProps } from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Carousel,
@@ -16,6 +17,7 @@ import {
 import carousel1 from "../../public/images/carousel1.webp"
 import carousel1Mobile from "../../public/images/carousel1-mobile.webp"
 import carousel2 from "../../public/images/carousel2.png"
+import carousel2Mobile from "../../public/images/carousel2-mobile.png"
 
 export function CarouselDemo() {
   const carouselSlides = [
@@ -26,7 +28,7 @@ export function CarouselDemo() {
     },
     {
       desktop: carousel2,
-      mobile: carousel2,
+      mobile: carousel2Mobile,
       alt: "Pack & Attack Removals Premium Relocation Services",
     },
   ]
@@ -42,31 +44,40 @@ export function CarouselDemo() {
                   <CardContent className="relative flex h-[55vh] sm:h-[70vh] md:h-[calc(100vh-4rem)] w-full items-center justify-center p-0">
                     <div className="relative h-full w-full">
                       
-                      {/* DESKTOP VIEW */}
-                      <div className="hidden md:block relative h-full w-full">
-                        <Image
-                          src={slide.desktop}
-                          alt={slide.alt}
-                          fill
-                          className="object-cover object-center"
-                          priority={index === 0}
-                          quality={75}
-                          sizes="(max-width: 767px) calc(100vw - 1rem), 100vw"
-                        />
-                      </div>
+                      {(() => {
+                        const common = { 
+                          alt: slide.alt, 
+                          fill: true, 
+                          priority: index === 0, 
+                          quality: 50, 
+                          sizes: "100vw",
+                          className: "object-cover object-center text-transparent"
+                        };
+                        const { props: { srcSet: desktop, src: desktopSrc } } = getImageProps({
+                          ...common,
+                          src: slide.desktop,
+                        });
+                        const { props: { srcSet: mobile, src: mobileSrc, ...rest } } = getImageProps({
+                          ...common,
+                          src: slide.mobile,
+                        });
 
-                      {/* MOBILE VIEW */}
-                      <div className="block md:hidden relative h-full w-full">
-                        <Image
-                          src={slide.mobile}
-                          alt={slide.alt}
-                          fill
-                          className="object-cover object-center"
-                          priority={index === 0}
-                          quality={75}
-                          sizes="(max-width: 767px) calc(100vw - 1rem), 100vw"
-                        />
-                      </div>
+                        return (
+                          <>
+                            {index === 0 && (
+                              <link rel="preload" as="image" href={desktopSrc} imageSrcSet={desktop} media="(min-width: 768px)" fetchPriority="high" />
+                            )}
+                            {index === 0 && (
+                              <link rel="preload" as="image" href={mobileSrc} imageSrcSet={mobile} media="(max-width: 767px)" fetchPriority="high" />
+                            )}
+                            <picture>
+                              <source media="(min-width: 768px)" srcSet={desktop} />
+                              <source media="(max-width: 767px)" srcSet={mobile} />
+                              <img {...rest} fetchPriority={index === 0 ? "high" : "auto"} />
+                            </picture>
+                          </>
+                        );
+                      })()}
 
                     </div>
                   </CardContent>
