@@ -1,10 +1,13 @@
 // app/components/home.tsx
-'use client';
-
 import React from 'react';
 import dynamic from 'next/dynamic';
 import CarouselSection from './carousel-section';
-import PricingSection from '../sections/pricing-section';
+
+// Lazy load below-the-fold components
+const PricingSection = dynamic(
+  () => import('../sections/pricing-section'),
+  { loading: () => <div className="h-96 w-full bg-slate-50 animate-pulse" /> }
+);
 
 
 // Lazy load below-the-fold components
@@ -23,7 +26,6 @@ const AnimatedTimeline = dynamic(
 );
 
 const SocialProof = dynamic(() => import('../../components/social-proof'), {
-  ssr: false,
   loading: () => <div className="h-64 w-full bg-slate-900 animate-pulse border-y border-slate-800" />
 });
 
