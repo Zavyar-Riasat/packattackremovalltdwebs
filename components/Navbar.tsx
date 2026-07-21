@@ -1,30 +1,31 @@
-// components/Navbar.tsx
 'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import logoIcon from '../app/favicon.ico'
 import Image from 'next/image';
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 border-b border-slate-100 antialiased transform-gpu will-change-transform">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-16 items-center gap-2">
 
-          {/* Logo / Brand - Use consistent text */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+          {/* Logo / Brand - Responsive Text Handling */}
+          <div className="flex-shrink-0 min-w-0">
+            <Link href="/" className="text-lg sm:text-xl font-black tracking-tight text-slate-900 flex items-center gap-2">
               <Image
                 src="/images/logo.png"
                 alt="Pack&Attack Logo"
-                width={44}
-                height={44}
-                className="w-12 h-12 object-contain"
-                priority // Ensures the logo image loads instantly above the fold
+                width={40}
+                height={40}
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain flex-shrink-0"
+                priority
               />
-              <span>PACK & ATTACK REMOVAL LTD</span>
+              {/* Short title for mobile, full title for tablet/desktop */}
+              <span className="truncate sm:hidden">PACK & ATTACK</span>
+              <span className="hidden sm:inline">PACK & ATTACK REMOVAL LTD</span>
             </Link>
           </div>
 
@@ -43,7 +44,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button Hamburger */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center flex-shrink-0">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
