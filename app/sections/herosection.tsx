@@ -21,16 +21,17 @@ import carousel2Mobile from "../../public/images/carousel2-mobile.png"
 
 export function CarouselDemo() {
   const carouselSlides = [
-    {
-      desktop: carousel1,
-      mobile: carousel1Mobile,
-      alt: "Pack & Attack Removals London Team in Action",
-    },
+  
     {
       desktop: carousel2,
       mobile: carousel2Mobile,
       alt: "Pack & Attack Removals Premium Relocation Services",
     },
+      {
+      desktop: carousel1,
+      mobile: carousel1Mobile,
+      alt: "Pack & Attack Removals London Team in Action",
+    }
   ]
 
   return (
